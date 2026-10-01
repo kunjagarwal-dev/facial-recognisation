@@ -1,19 +1,13 @@
-from pathlib import Path
-
 from facenet_pytorch import MTCNN
-from PIL import Image, ImageDraw
 
-mtcnn = MTCNN(keep_all=True) 
+def load_mtcnn(image_size=160, margin=0, keep_all=False):
+    return MTCNN(image_size=image_size, margin=margin, keep_all=keep_all)
 
-image_path = Path(__file__).resolve().parent.parent / "data" / "test_images" / "images.jpg"
-img = Image.open(image_path)
-output = mtcnn.detect(img)
+def detect_faces(img, mtcnn):
+    """Returns boxes, probs — for visualization/sanity-checking (Day 1 style)."""
+    boxes, probs = mtcnn.detect(img)
+    return boxes, probs
 
-print(output)
-
-img_draw = img.copy()
-draw = ImageDraw.Draw(img_draw)
-if output[0] is not None:
-    for box in output[0]:
-        draw.rectangle(box.tolist(), outline=(255, 0, 0), width=2)
-img_draw.show()
+def get_aligned_face(img, mtcnn):
+    """Returns a cropped, aligned 160x160 face tensor ready for FaceNet (Day 2+ style)."""
+    return mtcnn(img)
