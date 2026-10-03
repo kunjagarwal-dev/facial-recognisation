@@ -3,12 +3,13 @@ import pickle
 from pathlib import Path
 import torch
 from PIL import Image
+from src.detector import get_aligned_face
 import sys
 sys.path.append("../")
 
 def get_face_embedding_from_image(image_path, mtcnn, model):
     img = Image.open(image_path)
-    face_tensor = mtcnn(img)
+    face_tensor = get_aligned_face(img, mtcnn)
     if face_tensor is None:
         print(f"Warning: no face detected in {image_path}")
         return None

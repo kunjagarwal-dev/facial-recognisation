@@ -1,4 +1,5 @@
 from facenet_pytorch import MTCNN
+from PIL import Image
 
 def load_mtcnn(image_size=160, margin=0, keep_all=False):
     return MTCNN(image_size=image_size, margin=margin, keep_all=keep_all)
@@ -10,4 +11,6 @@ def detect_faces(img, mtcnn):
 
 def get_aligned_face(img, mtcnn):
     """Returns a cropped, aligned 160x160 face tensor ready for FaceNet (Day 2+ style)."""
+    if isinstance(img, Image.Image):
+        img = img.convert("RGB")
     return mtcnn(img)

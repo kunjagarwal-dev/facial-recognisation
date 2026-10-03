@@ -5,20 +5,25 @@ import pandas as pd
 
 
 def log_attendance(name, log_path="attendance_log.csv"):
-    file_exists = Path(log_path).exists()
+    path = Path(log_path)
+    needs_header = not path.exists() or path.stat().st_size == 0
 
-    with open(log_path, "a", newline="") as f:
+    with path.open("a", newline="") as f:
         writer = csv.writer(f)
-        if not file_exists:
+        if needs_header:
             writer.writerow(["Name", "Timestamp"])
         writer.writerow([name, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
 
 
 def already_logged_today(name, log_path="attendance_log.csv"):
-    if not Path(log_path).exists():
+    path = Path(log_path)
+    if not path.exists() or path.stat().st_size == 0:
         return False
 
-    df = pd.read_csv(log_path)
+    try:
+        df = pd.read_csv(path)
+    except pd.errors.EmptyDataError:
+        return False
     if df.empty:
         return False
 
